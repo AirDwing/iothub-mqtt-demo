@@ -4,3 +4,4 @@ demo/
 .DS_Store
 *.log
 *.log.*
+server/config/_development.js
