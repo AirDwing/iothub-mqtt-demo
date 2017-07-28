@@ -1,0 +1,19 @@
+{
+  "name": "iothub-mqtt-demo",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:server": "node server",
+    "dev:client": "node client"
+  },
+  "devDependencies": {
+    "eslint": "^4.3.0",
+    "eslint-config-dwing": "^1.1.0"
+  },
+  "dependencies": {
+    "mqtt-server": "^0.1.0"
+  },
+  "main": "server/index.js",
+  "repository": "git@github.com:AirDwing/iothub-mqtt-demo.git",
+  "author": "willin <willin@willin.org>",
+  "license": "MIT"
+}
