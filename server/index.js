@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const mqttServer = require('mqtt-server');
+const mqttServer = require('./lib/mqtt-server');
 
 const servers = mqttServer({
   mqtt: 'tcp://localhost:1883',
