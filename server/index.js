@@ -17,6 +17,26 @@ const servers = mqttServer({
   client.connack({
     returnCode: 0
   });
+  client.on('connect', function (data) {
+    const username = data.username;
+    const password = data.password.toString();
+    console.log(username, password);
+    // 发布测试
+    client.publish({
+      topic: 'deviceId',
+      payload: 'hello world'
+    });
+    if (username !== 'willin' || password !== 'willin') {
+      // 中断连接
+      this.disconnect();
+    }
+  });
+  // client.on('data', (data) => {
+  //   if (data.cmd === 'connect') {
+  //     console.log(data.username, data.password.toString());
+  //   }
+  //   console.log(data);
+  // });
 });
 
 servers.listen(() => {
