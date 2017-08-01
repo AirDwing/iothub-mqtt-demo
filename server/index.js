@@ -25,25 +25,24 @@ aedes.authenticate = (client, username, password, callback) => {
 };
 
 aedes.authorizePublish = (client, packet, callback) => {
-  client.close();
   callback(new Error('禁止发布消息'));
 };
 
 aedes.authorizeSubscribe = (client, sub, callback) => {
   // 订阅鉴权
-  if (sub.topic === 'aaaa') {
-    client.close();
-    callback(new Error('禁止越权访问设备'));
-    return;
+  console.log(sub);
+  if (sub.topic === 'deviceId') {
+    return callback(new Error('禁止越权订阅'));
   }
   callback(null, sub);
 };
 
 aedes.on('client', (client) => {
   console.log('new client', client.id);
-  client.publish({
-    topic: 'deviceId',
-    payload: 'hello world'
-  });
-  client.close();
+  setTimeout(() => {
+    client.publish({
+      topic: 'deviceId',
+      payload: 'hello world'
+    });
+  }, 3000);
 });

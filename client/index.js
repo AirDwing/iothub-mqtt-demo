@@ -14,7 +14,6 @@ client.on('message', (topic, message) => {
 });
 
 // 必要
-client.on('close', () => {
-  client.end();
-});
-
+// client.on('close', () => {
+//   client.end();
+// });
