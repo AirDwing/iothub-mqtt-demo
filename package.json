@@ -16,7 +16,7 @@
     "azure-event-hubs": "^0.0.8",
     "mqtt": "^2.10.0"
   },
-  "main": "demo/mosca.js",
+  "main": "server/index.js",
   "repository": "git@github.com:AirDwing/iothub-mqtt-demo.git",
   "author": "willin <willin@willin.org>",
   "license": "MIT"

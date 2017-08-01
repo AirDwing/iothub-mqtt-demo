@@ -1,7 +1,7 @@
 const mqtt = require('mqtt');
 
 const client = mqtt.connect('mqtts://127.0.0.1', {
-  // rejectUnauthorized: false,
+  rejectUnauthorized: false,
   username: 'willin',
   password: 'test'
 });
@@ -13,6 +13,7 @@ client.on('message', (topic, message) => {
   console.log(message.toString());
 });
 
+// 必要
 client.on('close', () => {
   client.end();
 });
