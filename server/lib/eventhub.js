@@ -1,9 +1,7 @@
 const EventHubClient = require('azure-event-hubs').Client;
 const { Message } = require('@airx/proto');
 
-const getPartitionIds = async (connStr) => {
-  const client = EventHubClient.fromConnectionString(connStr);
-  await client.open();
+const getPartitionIds = async (client) => {
   const partitionIds = await client.getPartitionIds();
   return partitionIds;
 };
@@ -22,10 +20,10 @@ const defaultMessageHandler = (message) => {
   }
 };
 
-const createReceiver = async ({ connStr = '', errorHandler = defaultErrorHandler, messageHandler = defaultMessageHandler } = {}) => {
+const createReceiver = async ({ connStr = '', messageHandler = defaultMessageHandler } = {}, errorHandler = defaultErrorHandler) => {
   const client = EventHubClient.fromConnectionString(connStr);
   await client.open();
-  const partitionIds = await getPartitionIds(connStr);
+  const partitionIds = await getPartitionIds(client);
   partitionIds.forEach(async (partitionId) => {
     const receiver = await client.createReceiver('$Default', partitionId, { startAfterTime: Date.now() });
     receiver.on('errorReceived', async (err) => {
@@ -40,4 +38,4 @@ const createReceiver = async ({ connStr = '', errorHandler = defaultErrorHandler
   });
 };
 
-exports.createReceiver = createReceiver;
+module.exports = createReceiver;

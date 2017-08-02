@@ -1,6 +1,8 @@
 const fs = require('fs');
 const aedes = require('aedes')();
 const path = require('path');
+const { eventhub: connStr } = require('./config');
+const eventhub = require('./lib/eventhub');
 
 const options = {
   key: fs.readFileSync(path.join(__dirname, '../extra/localhost.key')),
@@ -9,9 +11,7 @@ const options = {
 
 const server = require('tls').createServer(options, aedes.handle);
 
-server.listen(8883, () => {
-  console.log('server started and listening on port 8883');
-});
+const clients = [];
 
 aedes.authenticate = (client, username, password, callback) => {
   // 登录成功
@@ -38,24 +38,37 @@ aedes.authorizeSubscribe = (client, sub, callback) => {
   callback(null, null);
 };
 
-aedes.on('client', (client) => {
-  console.log('new client', client.id);
-  client.subscribe({
-    subscriptions: [{
-      topic: 'deviceId',
-      qos: 0
-    }]
-  }, (err) => {
-    if (err) {
-      console.error(err);
-    }
-  });
-
-  setTimeout(() => {
-    client.publish({
-      topic: 'test',
-      payload: 'hello world'
+eventhub({
+  connStr,
+  messageHandler: (message) => {
+    clients.forEach((client) => {
+      client.publish({
+        topic: 'test',
+        payload: JSON.stringify(message.body)
+      });
     });
-  }, 3000);
-});
+  }
+}).then(() => {
+  server.listen(8883, () => {
+    console.log('server started and listening on port 8883');
+  });
+  aedes.on('client', (client) => {
+    console.log('new client', client.id);
+    clients.push(client);
+    client.subscribe({
+      subscriptions: [{
+        topic: 'willin',
+        qos: 0
+      }]
+    }, (err) => {
+      if (err) {
+        console.error(err);
+      }
+    });
+    client.on('close', () => {
+      const index = clients.findIndex(x => x.id === client.id);
+      clients.splice(index, 1);
+    });
+  });
+}).catch(err => console.error(err));
 
