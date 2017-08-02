@@ -31,18 +31,31 @@ aedes.authorizePublish = (client, packet, callback) => {
 aedes.authorizeSubscribe = (client, sub, callback) => {
   // 订阅鉴权
   console.log(sub);
-  if (sub.topic === 'deviceId') {
+  if (sub.topic === 'test') {
     return callback(new Error('禁止越权订阅'));
+    // sub = null;
   }
-  callback(null, sub);
+  callback(null, null);
 };
 
 aedes.on('client', (client) => {
   console.log('new client', client.id);
+  client.subscribe({
+    subscriptions: [{
+      topic: 'deviceId',
+      qos: 0
+    }]
+  }, (err) => {
+    if (err) {
+      console.error(err);
+    }
+  });
+
   setTimeout(() => {
     client.publish({
-      topic: 'deviceId',
+      topic: 'test',
       payload: 'hello world'
     });
   }, 3000);
 });
+
